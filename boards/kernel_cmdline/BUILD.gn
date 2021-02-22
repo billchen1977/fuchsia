@@ -74,3 +74,11 @@ kernel_cmdline("vim3") {
     "netsvc.interface=/dev/dwmac/Designware-MAC/ethernet",
   ]
 }
+
+kernel_cmdline("rpi4") {
+  args = [
+    "kernel.serial=legacy",
+    "kernel.bypass-debuglog=true",
+  ]
+}
+

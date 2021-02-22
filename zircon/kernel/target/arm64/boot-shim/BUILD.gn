@@ -127,6 +127,7 @@ shims = [
   "msm8x53-som",
   "msm8998",
   "mt8167s_ref",
+  "rpi4",
   "visalia",
 ]
 
