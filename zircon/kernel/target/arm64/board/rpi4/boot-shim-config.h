@@ -59,7 +59,7 @@ static const dcfg_arm_generic_timer_driver_t timer_driver = {
 
 static const zbi_platform_id_t platform_id = {
     .vid = PDEV_VID_BROADCOM,
-    .pid = 0x14,
+    .pid = PDEV_PID_RPI4,
     .board_name = "rpi4",
 };
 
