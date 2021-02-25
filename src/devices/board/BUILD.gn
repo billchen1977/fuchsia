@@ -14,6 +14,7 @@ group("drivers") {
     "drivers/mt8167s_ref",
     "drivers/nelson",
     "drivers/qemu-arm64",
+    "drivers/rpi4",
     "drivers/sherlock:luis",
     "drivers/sherlock:luis-factory",
     "drivers/sherlock:luis-factory-rndis",
