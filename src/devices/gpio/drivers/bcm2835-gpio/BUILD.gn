@@ -5,9 +5,9 @@
 import("//build/bind/bind.gni")
 import("//build/config/fuchsia/rules.gni")
 
-bind_rules("rpi4-bind") {
-  rules = "rpi4.bind"
-  output = "rpi4-bind.h"
+bind_rules("bcm2835-gpio-bind") {
+  rules = "bcm2835-gpio.bind"
+  output = "bcm2835-gpio-bind.h"
   tests = "bind-tests.json"
   deps = [
     "//src/devices/bind/fuchsia.broadcom.platform",
@@ -15,32 +15,32 @@ bind_rules("rpi4-bind") {
   ]
 }
 
-group("tests") {
-  testonly = true
-  deps = [ ":rpi4-bind_test" ]
-}
-
-driver_module("rpi4") {
+driver_module("bcm2835-gpio") {
   configs += [
     "//build/config:all_source",
     "//build/config/fuchsia:enable_zircon_asserts",
   ]
-  if (is_fuchsia) {
-    configs += [ "//build/unification/config:zircon-migrated" ]
-  }
-  sources = [
-    "rpi4.cc",
-    "rpi4-gpio.cc",
-  ]
+  configs += [ "//build/unification/config:zircon-migrated" ]
+  sources = [ "bcm2835-gpio.cc" ]
   deps = [
-    ":rpi4-bind",
+    ":bcm2835-gpio-bind",
+    "//sdk/banjo/fuchsia.hardware.gpio",
+    "//sdk/banjo/fuchsia.hardware.gpioimpl",
     "//sdk/banjo/fuchsia.hardware.platform.bus",
+    "//sdk/banjo/fuchsia.hardware.platform.device",
+    "//src/devices/bus/lib/device-protocol-pdev",
     "//src/devices/lib/broadcom",
     "//src/devices/lib/driver",
     "//src/devices/lib/mmio",
     "//src/lib/ddk",
-    "//src/lib/ddk:ddk-metadata",
     "//src/lib/ddktl",
+    "//zircon/public/lib/fbl",
+    "//zircon/public/lib/zircon-internal",
+    "//zircon/public/lib/zx",
   ]
 }
 
+group("tests") {
+  testonly = true
+  deps = [ ":bcm2835-gpio-bind_test" ]
+}

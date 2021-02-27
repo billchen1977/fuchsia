@@ -5,6 +5,7 @@
 #ifndef SRC_DEVICES_BOARD_DRIVERS_RPI4_RPI4_H_
 #define SRC_DEVICES_BOARD_DRIVERS_RPI4_RPI4_H_
 
+#include <fuchsia/hardware/gpioimpl/cpp/banjo.h>
 #include <fuchsia/hardware/platform/bus/cpp/banjo.h>
 #include <threads.h>
 
@@ -30,8 +31,11 @@ class Rpi4 : public Rpi4Type {
   zx_status_t Start();
   int Thread();
 
+  zx_status_t GpioInit();
+
   const ddk::PBusProtocolClient pbus_;
   const pdev_board_info_t board_info_;
+  ddk::GpioImplProtocolClient gpio_impl_;
 
   thrd_t thread_;
 };

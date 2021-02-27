@@ -18,6 +18,12 @@ namespace rpi4 {
 int Rpi4::Thread() {
   zxlogf(INFO, "%s: Board %s Start", __func__, board_info_.board_name);
 
+  auto status = GpioInit();
+  if (status != ZX_OK) {
+    zxlogf(ERROR, "%s: GpioInit() failed: %s", __func__, zx_status_get_string(status));
+    return thrd_error;
+  }
+
   return ZX_OK;
 }
 
