@@ -1,0 +1,21 @@
+[
+    {
+        "name": "Match",
+        "expected": "match",
+        "device": {
+            "fuchsia.BIND_PROTOCOL": "fuchsia.platform.BIND_PROTOCOL.DEVICE",
+            "fuchsia.BIND_PLATFORM_DEV_VID": "fuchsia.broadcom.platform.BIND_PLATFORM_DEV_VID.BROADCOM",
+            "fuchsia.BIND_PLATFORM_DEV_PID": "fuchsia.broadcom.platform.BIND_PLATFORM_DEV_PID.RPI4",
+            "fuchsia.BIND_PLATFORM_DEV_DID": "fuchsia.broadcom.platform.BIND_PLATFORM_DEV_DID.MAILBOX"
+        }
+    },
+    {
+        "name": "Bad protocol",
+        "expected": "abort",
+        "device": {
+            "fuchsia.BIND_PLATFORM_DEV_VID": "fuchsia.broadcom.platform.BIND_PLATFORM_DEV_VID.BROADCOM",
+            "fuchsia.BIND_PLATFORM_DEV_PID": "fuchsia.broadcom.platform.BIND_PLATFORM_DEV_PID.RPI4",
+            "fuchsia.BIND_PLATFORM_DEV_DID": "fuchsia.broadcom.platform.BIND_PLATFORM_DEV_DID.MAILBOX"
+        }
+    }
+]

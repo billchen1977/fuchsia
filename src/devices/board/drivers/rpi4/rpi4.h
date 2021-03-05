@@ -13,6 +13,11 @@
 
 namespace rpi4 {
 
+// BTI IDs for our devices
+enum {
+  BTI_MAILBOX,
+};
+
 class Rpi4;
 using Rpi4Type = ddk::Device<Rpi4>;
 
@@ -32,6 +37,7 @@ class Rpi4 : public Rpi4Type {
   int Thread();
 
   zx_status_t GpioInit();
+  zx_status_t MailboxInit();
 
   const ddk::PBusProtocolClient pbus_;
   const pdev_board_info_t board_info_;

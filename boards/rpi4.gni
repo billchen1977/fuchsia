@@ -14,6 +14,7 @@ custom_signing_script_deps = [ "//zircon/kernel/target/arm64/boot-shim:rpi4" ]
 _common_bootfs_deps = [
   "//src/devices/board/drivers/rpi4",
   "//src/devices/gpio/drivers/bcm2835-gpio",
+  "//src/devices/scpi/drivers/rpi-mailbox",
 ]
 
 board_bootfs_labels += _common_bootfs_deps

@@ -5,13 +5,15 @@
 #ifndef SRC_DEVICES_LIB_BROADCOM_INCLUDE_SOC_BCM2711_H_
 #define SRC_DEVICES_LIB_BROADCOM_INCLUDE_SOC_BCM2711_H_
 
-#define BCM_PERIPH_BASE         0xfc000000U
-
+#define BCM_PERIPH_BASE         0xfe000000U
+#define ARM_BASE                (BCM_PERIPH_BASE + 0xb000)
+#define MAILBOX_BASE            (ARM_BASE + 0x880)
 #define GPIO_BASE               (BCM_PERIPH_BASE + 0x200000)
-#define GPIO_SIZE               (0x100)
 
 /* Interrupt */
 #define GIC_SPI_BASE            32
+#define GIC_SPI_MAILBOX0        (GIC_SPI_BASE + 33)
+#define GIC_SPI_MAILBOX1        (GIC_SPI_BASE + 35)
 #define GIC_SPI_GPIO0           (GIC_SPI_BASE + 113)
 #define GIC_SPI_GPIO1           (GIC_SPI_BASE + 114)
 #define GIC_SPI_GPIO2           (GIC_SPI_BASE + 115)

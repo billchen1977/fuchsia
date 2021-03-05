@@ -15,4 +15,5 @@ extend uint fuchsia.BIND_PLATFORM_DEV_PID {
 extend uint fuchsia.BIND_PLATFORM_DEV_DID {
   WIFI = 0x01,
   GPIO = 0x02,
+  MAILBOX = 0x03,
 };
