@@ -8,6 +8,8 @@
 #define BCM_PERIPH_BASE         0xfe000000U
 #define ARM_BASE                (BCM_PERIPH_BASE + 0xb000)
 #define MAILBOX_BASE            (ARM_BASE + 0x880)
+#define CLOCK_BASE              (BCM_PERIPH_BASE + 0x101000)
+#define CLOCK_SIZE              0x2000
 #define GPIO_BASE               (BCM_PERIPH_BASE + 0x200000)
 
 /* Interrupt */

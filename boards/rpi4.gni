@@ -15,6 +15,7 @@ _common_bootfs_deps = [
   "//src/devices/board/drivers/rpi4",
   "//src/devices/gpio/drivers/bcm2835-gpio",
   "//src/devices/scpi/drivers/rpi-mailbox",
+  "//src/devices/clock/drivers/bcm2835-clk",
 ]
 
 board_bootfs_labels += _common_bootfs_deps

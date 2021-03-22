@@ -36,6 +36,7 @@ class Rpi4 : public Rpi4Type {
   zx_status_t Start();
   int Thread();
 
+  zx_status_t ClockInit();
   zx_status_t GpioInit();
   zx_status_t MailboxInit();
 

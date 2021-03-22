@@ -1,0 +1,34 @@
+// Copyright 2021 The Fuchsia Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#ifndef SRC_DEVICES_LIB_BROADCOM_INCLUDE_SOC_RPI_CLK_H_
+#define SRC_DEVICES_LIB_BROADCOM_INCLUDE_SOC_RPI_CLK_H_
+
+enum rpi_firmware_clk_id {
+  RPI_FIRMWARE_EMMC_CLK_ID = 1,
+  RPI_FIRMWARE_UART_CLK_ID,
+  RPI_FIRMWARE_ARM_CLK_ID,
+  RPI_FIRMWARE_CORE_CLK_ID,
+  RPI_FIRMWARE_V3D_CLK_ID,
+  RPI_FIRMWARE_H264_CLK_ID,
+  RPI_FIRMWARE_ISP_CLK_ID,
+  RPI_FIRMWARE_SDRAM_CLK_ID,
+  RPI_FIRMWARE_PIXEL_CLK_ID,
+  RPI_FIRMWARE_PWM_CLK_ID,
+  RPI_FIRMWARE_HEVC_CLK_ID,
+  RPI_FIRMWARE_EMMC2_CLK_ID,
+  RPI_FIRMWARE_M2MC_CLK_ID,
+  RPI_FIRMWARE_PIXEL_BVB_CLK_ID,
+  RPI_FIRMWARE_NUM_CLK_ID,
+};
+
+#define RPI_FIRMWARE_STATE_ENABLE      1
+#define RPI_FIRMWARE_STATE_WAIT        2
+
+struct raspberrypi_firmware_clk_prop {
+  uint32_t id;
+  uint32_t val;
+};
+
+#endif  // SRC_DEVICES_LIB_BROADCOM_INCLUDE_SOC_RPI_CLK_H_

@@ -21,13 +21,19 @@ int Rpi4::Thread() {
   auto status = GpioInit();
   if (status != ZX_OK) {
     zxlogf(ERROR, "%s: GpioInit() failed: %s", __func__, zx_status_get_string(status));
-    return thrd_error;
+    return status;
   }
 
   status = MailboxInit();
   if (status != ZX_OK) {
     zxlogf(ERROR, "%s: MailboxInit() failed: %s", __func__, zx_status_get_string(status));
-    return thrd_error;
+    return status;
+  }
+
+  status = ClockInit();
+  if (status != ZX_OK) {
+    zxlogf(ERROR, "%s: ClockInit() failed: %s", __func__, zx_status_get_string(status));
+    return status;
   }
 
   return ZX_OK;

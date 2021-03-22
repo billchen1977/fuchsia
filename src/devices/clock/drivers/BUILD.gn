@@ -8,6 +8,7 @@ group("tests") {
   deps = [
     "amlogic-clk:tests",
     "as370-clk:tests",
+    "bcm2835-clk:tests",
     "clock:tests",
     "msm8x53-clk:tests",
     "mtk-clk:tests",

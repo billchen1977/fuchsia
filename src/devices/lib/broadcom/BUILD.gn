@@ -8,8 +8,10 @@ zx_library("broadcom") {
   sdk = "source"
   sdk_headers = [
     "soc/broadcom/bcm2711.h",
+    "soc/broadcom/bcm2835-clk.h",
     "soc/broadcom/bcm2835-gpio.h",
     "soc/broadcom/bcm2835-mailbox.h",
+    "soc/broadcom/rpi-clk.h",
     "soc/broadcom/rpi-firmware.h",
     "wifi/wifi-config.h"
   ]

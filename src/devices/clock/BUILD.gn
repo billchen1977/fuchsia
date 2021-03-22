@@ -6,6 +6,7 @@ group("drivers") {
   deps = [
     "drivers/amlogic-clk",
     "drivers/as370-clk",
+    "drivers/bcm2835-clk",
     "drivers/clock",
     "drivers/msm8x53-clk",
     "drivers/mtk-clk",
