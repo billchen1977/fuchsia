@@ -175,7 +175,7 @@ int Bcm2835Gpio::Thread() {
           }
         }
         // Clear the interrupt.
-        mmio_.SetBits32(index % 32, GPIO_GPEDS0 + index / 32 * 4);
+        mmio_.SetBit<uint32_t>(index % 32, GPIO_GPEDS0 + index / 32 * 4);
       }
     }
     port_interrupts_[packet.key].ack();
@@ -218,7 +218,7 @@ zx_status_t Bcm2835Gpio::GpioImplConfigOut(uint32_t index, uint8_t initial_value
   {
     fbl::AutoLock al(&mmio_lock_);
     mmio_.ModifyBits32(GPIO_GPFSEL_OUTPUT, (index % 10) * 3, 3, GPIO_GPFSEL0 + index / 10 * 4);
-    mmio_.SetBits32(index % 32, (initial_value ? GPIO_GPSET0 : GPIO_GPCLR0) + index / 32 * 4);
+    mmio_.SetBit<uint32_t>(index % 32, (initial_value ? GPIO_GPSET0 : GPIO_GPCLR0) + index / 32 * 4);
   }
 
   return ZX_OK;
@@ -258,7 +258,7 @@ zx_status_t Bcm2835Gpio::GpioImplWrite(uint32_t index, uint8_t value) {
 
   {
     fbl::AutoLock al(&mmio_lock_);
-    mmio_.SetBits32(index % 32, (value ? GPIO_GPSET0 : GPIO_GPCLR0) + index / 32 * 4);
+    mmio_.SetBit<uint32_t>(index % 32, (value ? GPIO_GPSET0 : GPIO_GPCLR0) + index / 32 * 4);
   }
 
   return ZX_OK;
@@ -288,38 +288,38 @@ zx_status_t Bcm2835Gpio::GpioImplGetInterrupt(uint32_t index, uint32_t flags, zx
     return status;
   }
 
-  mmio_.SetBits32(index % 32, GPIO_GPEDS0 + index / 32 * 4);
+  mmio_.SetBit<uint32_t>(index % 32, GPIO_GPEDS0 + index / 32 * 4);
 
   switch (flags & ZX_INTERRUPT_MODE_MASK) {
     case ZX_INTERRUPT_MODE_EDGE_LOW:
-      mmio_.SetBits32(index % 32, GPIO_GPFEN0 + index / 32 * 4);
-      mmio_.ClearBits32(index % 32, GPIO_GPREN0 + index / 32 * 4);
-      mmio_.ClearBits32(index % 32, GPIO_GPLEN0 + index / 32 * 4);
-      mmio_.ClearBits32(index % 32, GPIO_GPHEN0 + index / 32 * 4);
+      mmio_.SetBit<uint32_t>(index % 32, GPIO_GPFEN0 + index / 32 * 4);
+      mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPREN0 + index / 32 * 4);
+      mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPLEN0 + index / 32 * 4);
+      mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPHEN0 + index / 32 * 4);
       break;
     case ZX_INTERRUPT_MODE_EDGE_HIGH:
-      mmio_.ClearBits32(index % 32, GPIO_GPFEN0 + index / 32 * 4);
-      mmio_.SetBits32(index % 32, GPIO_GPREN0 + index / 32 * 4);
-      mmio_.ClearBits32(index % 32, GPIO_GPLEN0 + index / 32 * 4);
-      mmio_.ClearBits32(index % 32, GPIO_GPHEN0 + index / 32 * 4);
+      mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPFEN0 + index / 32 * 4);
+      mmio_.SetBit<uint32_t>(index % 32, GPIO_GPREN0 + index / 32 * 4);
+      mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPLEN0 + index / 32 * 4);
+      mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPHEN0 + index / 32 * 4);
       break;
     case ZX_INTERRUPT_MODE_LEVEL_LOW:
-      mmio_.ClearBits32(index % 32, GPIO_GPFEN0 + index / 32 * 4);
-      mmio_.ClearBits32(index % 32, GPIO_GPREN0 + index / 32 * 4);
-      mmio_.SetBits32(index % 32, GPIO_GPLEN0 + index / 32 * 4);
-      mmio_.ClearBits32(index % 32, GPIO_GPHEN0 + index / 32 * 4);
+      mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPFEN0 + index / 32 * 4);
+      mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPREN0 + index / 32 * 4);
+      mmio_.SetBit<uint32_t>(index % 32, GPIO_GPLEN0 + index / 32 * 4);
+      mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPHEN0 + index / 32 * 4);
       break;
     case ZX_INTERRUPT_MODE_LEVEL_HIGH:
-      mmio_.ClearBits32(index % 32, GPIO_GPFEN0 + index / 32 * 4);
-      mmio_.ClearBits32(index % 32, GPIO_GPREN0 + index / 32 * 4);
-      mmio_.ClearBits32(index % 32, GPIO_GPLEN0 + index / 32 * 4);
-      mmio_.SetBits32(index % 32, GPIO_GPHEN0 + index / 32 * 4);
+      mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPFEN0 + index / 32 * 4);
+      mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPREN0 + index / 32 * 4);
+      mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPLEN0 + index / 32 * 4);
+      mmio_.SetBit<uint32_t>(index % 32, GPIO_GPHEN0 + index / 32 * 4);
       break;
     case ZX_INTERRUPT_MODE_EDGE_BOTH:
-      mmio_.SetBits32(index % 32, GPIO_GPFEN0 + index / 32 * 4);
-      mmio_.SetBits32(index % 32, GPIO_GPREN0 + index / 32 * 4);
-      mmio_.ClearBits32(index % 32, GPIO_GPLEN0 + index / 32 * 4);
-      mmio_.ClearBits32(index % 32, GPIO_GPHEN0 + index / 32 * 4);
+      mmio_.SetBit<uint32_t>(index % 32, GPIO_GPFEN0 + index / 32 * 4);
+      mmio_.SetBit<uint32_t>(index % 32, GPIO_GPREN0 + index / 32 * 4);
+      mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPLEN0 + index / 32 * 4);
+      mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPHEN0 + index / 32 * 4);
       break;
     default:
       return ZX_ERR_INVALID_ARGS;
@@ -342,11 +342,11 @@ zx_status_t Bcm2835Gpio::GpioImplReleaseInterrupt(uint32_t index) {
     return ZX_ERR_NOT_FOUND;
   }
 
-  mmio_.ClearBits32(index % 32, GPIO_GPFEN0 + index / 32 * 4);
-  mmio_.ClearBits32(index % 32, GPIO_GPREN0 + index / 32 * 4);
-  mmio_.ClearBits32(index % 32, GPIO_GPLEN0 + index / 32 * 4);
-  mmio_.ClearBits32(index % 32, GPIO_GPHEN0 + index / 32 * 4);
-  mmio_.SetBits32(index % 32, GPIO_GPEDS0 + index / 32 * 4);
+  mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPFEN0 + index / 32 * 4);
+  mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPREN0 + index / 32 * 4);
+  mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPLEN0 + index / 32 * 4);
+  mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPHEN0 + index / 32 * 4);
+  mmio_.SetBit<uint32_t>(index % 32, GPIO_GPEDS0 + index / 32 * 4);
 
   gpio_interrupts_[index].destroy();
   gpio_interrupts_[index].reset();
@@ -368,15 +368,15 @@ zx_status_t Bcm2835Gpio::GpioImplSetPolarity(uint32_t index, uint32_t polarity) 
   }
 
   if (polarity == GPIO_POLARITY_HIGH) {
-    mmio_.ClearBits32(index % 32, GPIO_GPFEN0 + index / 32 * 4);
-    mmio_.SetBits32(index % 32, GPIO_GPREN0 + index / 32 * 4);
+    mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPFEN0 + index / 32 * 4);
+    mmio_.SetBit<uint32_t>(index % 32, GPIO_GPREN0 + index / 32 * 4);
   } else {
-    mmio_.SetBits32(index % 32, GPIO_GPFEN0 + index / 32 * 4);
-    mmio_.ClearBits32(index % 32, GPIO_GPREN0 + index / 32 * 4);
+    mmio_.SetBit<uint32_t>(index % 32, GPIO_GPFEN0 + index / 32 * 4);
+    mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPREN0 + index / 32 * 4);
   }
-  mmio_.ClearBits32(index % 32, GPIO_GPLEN0 + index / 32 * 4);
-  mmio_.ClearBits32(index % 32, GPIO_GPHEN0 + index / 32 * 4);
-  mmio_.SetBits32(index % 32, GPIO_GPEDS0 + index / 32 * 4);
+  mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPLEN0 + index / 32 * 4);
+  mmio_.ClearBit<uint32_t>(index % 32, GPIO_GPHEN0 + index / 32 * 4);
+  mmio_.SetBit<uint32_t>(index % 32, GPIO_GPEDS0 + index / 32 * 4);
 
   return ZX_OK;
 }
