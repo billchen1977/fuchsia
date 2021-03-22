@@ -952,6 +952,36 @@ zx_status_t Fragment::RpcDsi(const uint8_t* req_buf, uint32_t req_size, uint8_t*
   }
 }
 
+zx_status_t Fragment::RpcMailbox(const uint8_t* req_buf, uint32_t req_size, uint8_t* resp_buf,
+                                 uint32_t* out_resp_size, zx::handle* req_handles,
+                                 uint32_t req_handle_count, zx::handle* resp_handles,
+                                 uint32_t* resp_handle_count) {
+  if (!mailbox_client_.proto_client().is_valid()) {
+    return ZX_ERR_NOT_SUPPORTED;
+  }
+  auto* req = reinterpret_cast<const MailboxProxyRequest*>(req_buf);
+  mailbox_data_buf_t mdata;
+  if (req_size < sizeof(*req)) {
+    zxlogf(ERROR, "%s received %u, expecting %zu", __func__, req_size, sizeof(*req));
+    return ZX_ERR_INTERNAL;
+  }
+
+  auto resp = reinterpret_cast<MailboxProxyResponse*>(resp_buf);
+  *out_resp_size = sizeof(*resp);
+  switch (req->op) {
+    case MailboxOp::SEND_COMMAND:
+      mdata = req->mdata;
+      mdata.tx_buffer = reinterpret_cast<const uint8_t*>(&req[1]);
+      resp->channel = req->channel;
+      resp->channel.rx_buffer = reinterpret_cast<const uint8_t*>(&resp[1]);
+      *out_resp_size += req->channel.rx_size;
+      return mailbox_client_.proto_client().SendCommand(&resp->channel, &mdata);
+    default:
+      zxlogf(ERROR, "%s: unknown mailbox op %u", __func__, static_cast<uint32_t>(req->op));
+      return ZX_ERR_INTERNAL;
+  }
+}
+
 zx_status_t Fragment::DdkRxrpc(zx_handle_t raw_channel) {
   zx::unowned_channel channel(raw_channel);
   if (!channel->is_valid()) {
@@ -1079,6 +1109,10 @@ zx_status_t Fragment::DdkRxrpc(zx_handle_t raw_channel) {
       break;
     case ZX_PROTOCOL_DSI:
       status = RpcDsi(req_buf, actual, resp_buf, &resp_len, req_handles, req_handle_count,
+                      resp_handles, &resp_handle_count);
+      break;
+    case ZX_PROTOCOL_MAILBOX:
+      status = RpcMailbox(req_buf, actual, resp_buf, &resp_len, req_handles, req_handle_count,
                       resp_handles, &resp_handle_count);
       break;
     default:
@@ -1350,6 +1384,14 @@ zx_status_t Fragment::DdkGetProtocol(uint32_t proto_id, void* out_protocol) {
         return ZX_ERR_NOT_SUPPORTED;
       }
       vreg_client_.proto_client().GetProto(static_cast<vreg_protocol_t*>(out_protocol));
+      return ZX_OK;
+    }
+
+    case ZX_PROTOCOL_MAILBOX: {
+      if (!mailbox_client_.proto_client().is_valid()) {
+        return ZX_ERR_NOT_SUPPORTED;
+      }
+      mailbox_client_.proto_client().GetProto(static_cast<mailbox_protocol_t*>(out_protocol));
       return ZX_OK;
     }
 

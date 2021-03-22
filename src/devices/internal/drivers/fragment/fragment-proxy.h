@@ -26,6 +26,7 @@
 #include <fuchsia/hardware/tee/cpp/banjo.h>
 #include <fuchsia/hardware/usb/modeswitch/cpp/banjo.h>
 #include <fuchsia/hardware/vreg/cpp/banjo.h>
+#include <fuchsia/hardware/mailbox/cpp/banjo.h>
 #include <lib/zx/channel.h>
 
 #include <ddk/binding.h>
@@ -62,6 +63,7 @@ class FragmentProxy : public FragmentProxyBase,
                       public ddk::GoldfishAddressSpaceProtocol<FragmentProxy>,
                       public ddk::GoldfishPipeProtocol<FragmentProxy>,
                       public ddk::DsiProtocol<FragmentProxy>,
+                      public ddk::MailboxProtocol<FragmentProxy>,
                       public ddk::GoldfishSyncProtocol<FragmentProxy> {
  public:
   FragmentProxy(zx_device_t* parent, zx::channel rpc)
@@ -169,6 +171,9 @@ class FragmentProxy : public FragmentProxyBase,
 
   zx_status_t CodecConnect(zx::channel chan);
   zx_status_t DaiConnect(zx::channel chan);
+
+  // Mailbox
+  zx_status_t MailboxSendCommand(const mailbox_channel_t* channel, const mailbox_data_buf_t* mdata);
 
  private:
   zx::channel rpc_;

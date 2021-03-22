@@ -96,6 +96,9 @@ zx_status_t FragmentProxy::DdkGetProtocol(uint32_t proto_id, void* out) {
     case ZX_PROTOCOL_DSI:
       proto->ops = &dsi_protocol_ops_;
       return ZX_OK;
+    case ZX_PROTOCOL_MAILBOX:
+      proto->ops = &mailbox_protocol_ops_;
+      return ZX_OK;
     default:
       zxlogf(ERROR, "%s unsupported protocol \'%u\'", __func__, proto_id);
       return ZX_ERR_NOT_SUPPORTED;
@@ -1121,6 +1124,51 @@ zx_status_t FragmentProxy::DsiConnect(zx::channel server) {
   req.op = DsiOp::CONNECT;
   zx_handle_t handle = server.release();
   return Rpc(&req.header, sizeof(req), &resp, sizeof(resp), &handle, 1, nullptr, 0, nullptr);
+}
+
+zx_status_t FragmentProxy::MailboxSendCommand(const mailbox_channel_t* channel, const mailbox_data_buf_t* mdata) {
+  uint8_t req_buffer[kProxyMaxTransferSize];
+  auto req = reinterpret_cast<MailboxProxyRequest*>(req_buffer);
+  req->header.proto_id = ZX_PROTOCOL_MAILBOX;
+  req->op = MailboxOp::SEND_COMMAND;
+  req->channel = *channel;
+  req->mdata = *mdata;
+
+  size_t req_length = sizeof(MailboxProxyRequest) + mdata->tx_size;
+  if (req_length >= kProxyMaxTransferSize) {
+    return ZX_ERR_BUFFER_TOO_SMALL;
+  }
+
+  if (mdata->tx_size) {
+    uint8_t* p_write = reinterpret_cast<uint8_t*>(&req[1]);
+    memcpy(p_write, mdata->tx_buffer, mdata->tx_size);
+  }
+
+  uint8_t resp_buffer[kProxyMaxTransferSize];
+  auto resp = reinterpret_cast<MailboxProxyResponse*>(resp_buffer);
+
+  const size_t resp_length = sizeof(MailboxProxyResponse) + channel->rx_size;
+  if (resp_length >= kProxyMaxTransferSize) {
+    return ZX_ERR_BUFFER_TOO_SMALL;
+  }
+
+  size_t actual;
+  auto status = Rpc(&req->header, static_cast<uint32_t>(req_length), &resp->header,
+                    static_cast<uint32_t>(resp_length), nullptr, 0, nullptr, 0, &actual);
+  if (status != ZX_OK) {
+    return status;
+  }
+
+  if (actual != resp_length || channel->rx_size != resp->channel.rx_size) {
+    return ZX_ERR_INTERNAL;
+  }
+
+  if (channel->rx_size) {
+    uint8_t* p_read = reinterpret_cast<uint8_t*>(&resp[1]);
+    memcpy((void*)(channel->rx_buffer), p_read, channel->rx_size);
+  }
+
+  return ZX_OK;
 }
 
 const zx_driver_ops_t driver_ops = []() {

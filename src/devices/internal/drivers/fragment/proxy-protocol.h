@@ -432,6 +432,22 @@ struct DsiProxyRequest {
   DsiOp op;
 };
 
+enum class MailboxOp {
+  SEND_COMMAND,
+};
+
+struct MailboxProxyRequest {
+  ProxyRequest header;
+  MailboxOp op;
+  mailbox_channel_t channel;
+  mailbox_data_buf_t mdata;
+};
+
+struct MailboxProxyResponse {
+  ProxyResponse header;
+  mailbox_channel_t channel;
+};
+
 }  // namespace fragment
 
 #endif  // SRC_DEVICES_INTERNAL_DRIVERS_FRAGMENT_PROXY_PROTOCOL_H_

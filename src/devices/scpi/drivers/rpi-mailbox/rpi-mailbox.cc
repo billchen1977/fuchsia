@@ -103,8 +103,20 @@ end:
 }
 
 zx_status_t RpiMailbox::Bind() {
-  zx_status_t status;
-  if ((status = DdkAdd("rpi-mailbox")) != ZX_OK) {
+  pdev_device_info_t info;
+  zx_status_t status = pdev_.GetDeviceInfo(&info);
+  if (status != ZX_OK) {
+    zxlogf(ERROR, "%s: GetDeviceInfo failed: %d", __FILE__, status);
+    return status;
+  }
+
+  zx_device_prop_t props[] = {
+      {BIND_PLATFORM_DEV_VID, 0, info.vid},
+      {BIND_PLATFORM_DEV_PID, 0, info.pid},
+      {BIND_PLATFORM_DEV_DID, 0, info.did},
+  };
+
+  if ((status = DdkAdd(ddk::DeviceAddArgs("rpi-mailbox").set_props(props).set_proto_id(ZX_PROTOCOL_MAILBOX))) != ZX_OK) {
     zxlogf(ERROR, "%s: DdkAdd failed: %d", __FILE__, status);
     return status;
   }
