@@ -154,6 +154,7 @@ library_headers("ddk-deprecated-binding-headers") {
     "//src/devices/board/drivers/mt8167s_ref:*",
     "//src/devices/board/drivers/nelson:*",
     "//src/devices/board/drivers/qemu-arm64:*",
+    "//src/devices/board/drivers/rpi4:*",
     "//src/devices/board/drivers/sherlock:*",
     "//src/devices/board/drivers/vim2:*",
     "//src/devices/board/drivers/vim3:*",
