@@ -38,7 +38,7 @@ zx_status_t RpiMailbox::MailboxSendCommand(const mailbox_channel_t* channel,
   zx_paddr_t phys;
   uint32_t* vbuf;
   uint32_t wdata, rdata;
-  uint32_t size = 6 * sizeof(uint32_t) + mdata->tx_size;
+  uint32_t size = (mdata->cmd ? 6 : 3) * sizeof(uint32_t) + mdata->tx_size;
   zx_status_t status = zx::vmo::create_contiguous(bti_, ZX_ROUNDUP_PAGE_SIZE(size), 0, &vmo);
   if (status != ZX_OK) {
     zxlogf(ERROR, "%s: could not create VMO: %d", __FILE__, status);
@@ -61,11 +61,16 @@ zx_status_t RpiMailbox::MailboxSendCommand(const mailbox_channel_t* channel,
 
   vbuf[0] = size;
   vbuf[1] = RPI_FIRMWARE_STATUS_REQUEST;
-  vbuf[2] = mdata->cmd;        // tag
-  vbuf[3] = mdata->tx_size;    // buf_size
-  vbuf[4] = 0;                 // req_resp_size
-  memcpy(&vbuf[5], mdata->tx_buffer, mdata->tx_size);
-  vbuf[5 + mdata->tx_size / 4] = RPI_FIRMWARE_PROPERTY_END;
+  if (mdata->cmd) {
+    vbuf[2] = mdata->cmd;        // tag
+    vbuf[3] = mdata->tx_size;    // buf_size
+    vbuf[4] = 0;                 // req_resp_size
+    memcpy(&vbuf[5], mdata->tx_buffer, mdata->tx_size);
+    vbuf[5 + mdata->tx_size / 4] = RPI_FIRMWARE_PROPERTY_END;
+  } else {
+    memcpy(&vbuf[2], mdata->tx_buffer, mdata->tx_size);
+    vbuf[2 + mdata->tx_size / 4] = RPI_FIRMWARE_PROPERTY_END;
+  }
   vmo.op_range(ZX_VMO_OP_CACHE_CLEAN, 0, size, nullptr, 0);
 
   while (mailbox_mmio_->Read32(channel->mailbox * MAILBOX_SIZE + MAILBOX1_STA) & MAILBOX_FULL);
@@ -89,11 +94,19 @@ zx_status_t RpiMailbox::MailboxSendCommand(const mailbox_channel_t* channel,
   }
 
   vmo.op_range(ZX_VMO_OP_CACHE_INVALIDATE, 0, size, nullptr, 0);
-  if (vbuf[1] == RPI_FIRMWARE_STATUS_SUCCESS && vbuf[4] == (RPI_FIRMWARE_STATUS_SUCCESS | channel->rx_size)) {
-    memcpy((void *)channel->rx_buffer, &vbuf[5], channel->rx_size);
-    status = ZX_OK;
-  } else {
-    status = ZX_ERR_INTERNAL;
+  status = ZX_ERR_INTERNAL;
+  if (vbuf[1] == RPI_FIRMWARE_STATUS_SUCCESS) {
+    if (mdata->cmd) {
+      if (vbuf[4] == (RPI_FIRMWARE_STATUS_SUCCESS | channel->rx_size)) {
+        memcpy((void *)channel->rx_buffer, &vbuf[5], channel->rx_size);
+        status = ZX_OK;
+      }
+    } else {
+      if (channel->rx_size == mdata->tx_size) {
+        memcpy((void *)channel->rx_buffer, &vbuf[2], channel->rx_size);
+        status = ZX_OK;
+      }
+    }
   }
 
 end:
