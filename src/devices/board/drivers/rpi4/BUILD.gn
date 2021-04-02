@@ -33,10 +33,12 @@ driver_module("rpi4") {
     "rpi4-clock.cc",
     "rpi4-gpio.cc",
     "rpi4-mailbox.cc",
+    "rpi4-sysmem.cc",
   ]
   deps = [
     ":rpi4-bind",
     "//sdk/banjo/fuchsia.hardware.platform.bus",
+    "//sdk/banjo/fuchsia.sysmem",
     "//src/devices/lib/broadcom",
     "//src/devices/lib/driver",
     "//src/devices/lib/mmio",

@@ -24,6 +24,12 @@ int Rpi4::Thread() {
     return status;
   }
 
+  status = SysmemInit();
+  if (status != ZX_OK) {
+    zxlogf(ERROR, "%s: SysmemInit() failed: %s", __func__, zx_status_get_string(status));
+    return status;
+  }
+
   status = MailboxInit();
   if (status != ZX_OK) {
     zxlogf(ERROR, "%s: MailboxInit() failed: %s", __func__, zx_status_get_string(status));
