@@ -97,9 +97,18 @@ zx_status_t RpiMailbox::MailboxSendCommand(const mailbox_channel_t* channel,
   status = ZX_ERR_INTERNAL;
   if (vbuf[1] == RPI_FIRMWARE_STATUS_SUCCESS) {
     if (mdata->cmd) {
-      if (vbuf[4] == (RPI_FIRMWARE_STATUS_SUCCESS | channel->rx_size)) {
-        memcpy((void *)channel->rx_buffer, &vbuf[5], channel->rx_size);
-        status = ZX_OK;
+      if (channel->rx_size) {
+        if (vbuf[4] == (RPI_FIRMWARE_STATUS_SUCCESS | channel->rx_size)) {
+          memcpy((void *)channel->rx_buffer, &vbuf[5], channel->rx_size);
+          status = ZX_OK;
+        } else {
+          zxlogf(ERROR, "%s: readed size mismatch 0x%08x vs 0x%08zx", __FILE__, vbuf[4], channel->rx_size);
+        }
+      } else {
+        if (vbuf[4] == 0)
+          status = ZX_OK;
+        else
+          zxlogf(ERROR, "%s: readed size 0x%08x is not 0", __FILE__, vbuf[4]);
       }
     } else {
       if (channel->rx_size == mdata->tx_size) {
