@@ -138,7 +138,7 @@ zx_status_t RpiMailbox::Bind() {
       {BIND_PLATFORM_DEV_DID, 0, info.did},
   };
 
-  if ((status = DdkAdd(ddk::DeviceAddArgs("rpi-mailbox").set_props(props).set_proto_id(ZX_PROTOCOL_MAILBOX))) != ZX_OK) {
+  if ((status = DdkAdd(ddk::DeviceAddArgs("rpi-mailbox").set_props(props).set_proto_id(ZX_PROTOCOL_MAILBOX).set_flags(DEVICE_ADD_ALLOW_MULTI_COMPOSITE))) != ZX_OK) {
     zxlogf(ERROR, "%s: DdkAdd failed: %d", __FILE__, status);
     return status;
   }
