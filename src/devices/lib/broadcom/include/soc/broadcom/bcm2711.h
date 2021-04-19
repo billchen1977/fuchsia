@@ -11,6 +11,8 @@
 #define CLOCK_BASE              (BCM_PERIPH_BASE + 0x101000)
 #define CLOCK_SIZE              0x2000
 #define GPIO_BASE               (BCM_PERIPH_BASE + 0x200000)
+#define SMI_BASE                (BCM_PERIPH_BASE + 0x600000)
+#define SMI_SIZE                0x100
 
 /* Interrupt */
 #define GIC_SPI_BASE            32
@@ -20,6 +22,7 @@
 #define GIC_SPI_GPIO1           (GIC_SPI_BASE + 114)
 #define GIC_SPI_GPIO2           (GIC_SPI_BASE + 115)
 #define GIC_SPI_GPIO3           (GIC_SPI_BASE + 116)
+#define GIC_SPI_SMI             (GIC_SPI_BASE + 112)
 
 /* GPIO */
 #define GPIO_PIN_COUNT          58

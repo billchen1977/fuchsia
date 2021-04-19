@@ -42,6 +42,12 @@ int Rpi4::Thread() {
     return status;
   }
 
+  status = DisplayInit();
+  if (status != ZX_OK) {
+    zxlogf(ERROR, "%s: DisplayInit() failed: %s", __func__, zx_status_get_string(status));
+    return status;
+  }
+
   return ZX_OK;
 }
 

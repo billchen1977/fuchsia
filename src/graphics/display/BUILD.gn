@@ -17,6 +17,7 @@ group("drivers") {
     "drivers/intel-i915",
     "drivers/mt8167s-display",
     "drivers/ssd1306:ssd1306_driver",
+    "drivers/vc4-display",
     "drivers/vim-display",
   ]
 }

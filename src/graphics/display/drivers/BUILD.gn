@@ -17,6 +17,7 @@ group("tests") {
     "mt8167s-display:tests",
     "simple:tests",
     "ssd1306:tests",
+    "vc4-display:tests",
     "vim-display:tests",
   ]
 }

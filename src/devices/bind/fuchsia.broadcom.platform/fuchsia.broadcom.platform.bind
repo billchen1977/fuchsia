@@ -17,4 +17,5 @@ extend uint fuchsia.BIND_PLATFORM_DEV_DID {
   GPIO = 0x02,
   MAILBOX = 0x03,
   CLK = 0x04,
+  DISPLAY = 0x05,
 };

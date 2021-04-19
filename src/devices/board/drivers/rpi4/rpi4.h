@@ -17,6 +17,7 @@ namespace rpi4 {
 enum {
   BTI_SYSMEM,
   BTI_MAILBOX,
+  BTI_DISPLAY,
 };
 
 class Rpi4;
@@ -41,6 +42,7 @@ class Rpi4 : public Rpi4Type {
   zx_status_t GpioInit();
   zx_status_t MailboxInit();
   zx_status_t SysmemInit();
+  zx_status_t DisplayInit();
 
   const ddk::PBusProtocolClient pbus_;
   const pdev_board_info_t board_info_;

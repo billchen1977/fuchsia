@@ -158,6 +158,7 @@ __BEGIN_CDECLS
 #define PDEV_DID_BCM_GPIO           0x02
 #define PDEV_DID_BCM_MAILBOX        0x03
 #define PDEV_DID_BCM_CLK            0x04
+#define PDEV_DID_BCM_DISPLAY        0x05
 
 //Hardkernel
 #define PDEV_VID_HARDKERNEL         0x07
